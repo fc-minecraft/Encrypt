@@ -16,6 +16,9 @@
             --text-color: #334155;
             --background: #f8fafc;
             --card-bg: #cbd5e1;
+            --switch-bg-on: #334155;
+            --switch-bg-off: #cbd5e1;
+            --switch-ball: #ffffff;
         }
 
         body {
@@ -46,10 +49,9 @@
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
         
-        /* Цвета сложности */
-        .easy-card { background-color: #d1fae5; } /* Светло-зеленый */
-        .medium-card { background-color: #fef9c3; } /* Светло-желтый */
-        .hard-card { background-color: #fee2e2; } /* Светло-красный */
+        .easy-card { background-color: #d1fae5; }
+        .medium-card { background-color: #fef9c3; }
+        .hard-card { background-color: #fee2e2; }
         
         .easy-header { color: #065f46; }
         .medium-header { color: #a16207; }
@@ -120,6 +122,60 @@
             border-color: #94a3b8;
             box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.5);
         }
+
+        /* Стили для нового переключателя */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--switch-bg-off);
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: var(--switch-ball);
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--switch-bg-on);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
     </style>
 </head>
 <body>
@@ -138,6 +194,15 @@
                 <input type="text" id="passInp" placeholder="Пароль для сложных шифров"
                        class="w-full p-4 text-lg rounded-xl input-field focus:outline-none transition-shadow"
                 >
+            </div>
+            
+            <div class="toggle-container">
+                <span id="encryptLabel" class="font-medium text-lg text-gray-400">Зашифровать</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="modeSwitch">
+                    <span class="slider"></span>
+                </label>
+                <span id="decryptLabel" class="font-medium text-lg text-gray-800">Расшифровать</span>
             </div>
         </div>
         
@@ -327,6 +392,12 @@
         const caesarVal = document.getElementById('caesarVal');
         const zigzagSlide = document.getElementById('zigzagSlide');
         const zigzagVal = document.getElementById('zigzagVal');
+        
+        const modeSwitch = document.getElementById('modeSwitch');
+        const encryptLabel = document.getElementById('encryptLabel');
+        const decryptLabel = document.getElementById('decryptLabel');
+        
+        let isEncrypting = true;
 
         const reverseOut = document.getElementById('reverseOut');
         const atbashOut = document.getElementById('atbashOut');
@@ -364,33 +435,82 @@
             caesarVal.textContent = shift;
             zigzagVal.textContent = zigzagRows;
 
-            // Шифрование
-            reverseOut.textContent = text.split('').reverse().join('');
-            atbashOut.textContent = atbash(text);
-            rot13Out.textContent = caesar(text, 13);
-            caesarOut.textContent = caesar(text, shift);
-            polybiusOut.textContent = polybius(text);
-            zigzagOut.textContent = zigzag(text, zigzagRows);
-            vigenereOut.textContent = vigenere(text, pass);
-            xorOut.textContent = xor(text, pass);
-            base64Out.textContent = toBase64(text);
-            aes128Out.textContent = aesEncrypt(text, pass, 128);
-            aes256Out.textContent = aesEncrypt(text, pass, 256);
-            polyalphabeticOut.textContent = polyalphabetic(text, pass);
+            if (isEncrypting) {
+                encryptLabel.classList.remove('text-gray-400');
+                encryptLabel.classList.add('text-gray-800');
+                decryptLabel.classList.remove('text-gray-800');
+                decryptLabel.classList.add('text-gray-400');
+                
+                const reverseEnc = text.split('').reverse().join('');
+                const atbashEnc = atbash(text);
+                const rot13Enc = caesar(text, 13);
+                const caesarEnc = caesar(text, shift);
+                const polybiusEnc = polybius(text);
+                const zigzagEnc = zigzag(text, zigzagRows);
+                const vigenereEnc = vigenere(text, pass);
+                const xorEnc = xor(text, pass);
+                const base64Enc = toBase64(text);
+                const aes128Enc = aesEncrypt(text, pass, 128);
+                const aes256Enc = aesEncrypt(text, pass, 256);
+                const polyalphabeticEnc = polyalphabetic(text, pass);
+    
+                reverseOut.textContent = reverseEnc;
+                atbashOut.textContent = atbashEnc;
+                rot13Out.textContent = rot13Enc;
+                caesarOut.textContent = caesarEnc;
+                polybiusOut.textContent = polybiusEnc;
+                zigzagOut.textContent = zigzagEnc;
+                vigenereOut.textContent = vigenereEnc;
+                xorOut.textContent = xorEnc;
+                base64Out.textContent = base64Enc;
+                aes128Out.textContent = aes128Enc;
+                aes256Out.textContent = aes256Enc;
+                polyalphabeticOut.textContent = polyalphabeticEnc;
+    
+                reverseDecOut.textContent = reverseEnc.split('').reverse().join('');
+                atbashDecOut.textContent = atbash(atbashEnc);
+                rot13DecOut.textContent = caesar(rot13Enc, -13);
+                caesarDecOut.textContent = caesar(caesarEnc, -shift);
+                polybiusDecOut.textContent = polybiusDec(polybiusEnc);
+                zigzagDecOut.textContent = zigzagDec(zigzagEnc, zigzagRows);
+                vigenereDecOut.textContent = vigenereDec(vigenereEnc, pass);
+                xorDecOut.textContent = xor(xorEnc, pass);
+                base64DecOut.textContent = fromBase64(base64Enc);
+                aes128DecOut.textContent = aesDecrypt(aes128Enc, pass, 128);
+                aes256DecOut.textContent = aesDecrypt(aes256Enc, pass, 256);
+                polyalphabeticDecOut.textContent = polyalphabeticDec(polyalphabeticEnc, pass);
+            } else {
+                encryptLabel.classList.remove('text-gray-800');
+                encryptLabel.classList.add('text-gray-400');
+                decryptLabel.classList.remove('text-gray-400');
+                decryptLabel.classList.add('text-gray-800');
 
-            // Расшифровка
-            reverseDecOut.textContent = text.split('').reverse().join('');
-            atbashDecOut.textContent = atbash(text);
-            rot13DecOut.textContent = caesar(text, -13);
-            caesarDecOut.textContent = caesar(text, -shift);
-            polybiusDecOut.textContent = polybiusDec(polybius(text));
-            zigzagDecOut.textContent = zigzagDec(zigzag(text, zigzagRows), zigzagRows);
-            vigenereDecOut.textContent = vigenereDec(vigenere(text, pass), pass);
-            xorDecOut.textContent = xor(text, pass); // XOR является симметричным
-            base64DecOut.textContent = fromBase64(toBase64(text));
-            aes128DecOut.textContent = aesDecrypt(aesEncrypt(text, pass, 128), pass, 128);
-            aes256DecOut.textContent = aesDecrypt(aesEncrypt(text, pass, 256), pass, 256);
-            polyalphabeticDecOut.textContent = polyalphabeticDec(polyalphabetic(text, pass), pass);
+                reverseDecOut.textContent = text.split('').reverse().join('');
+                atbashDecOut.textContent = atbash(text);
+                rot13DecOut.textContent = caesar(text, -13);
+                caesarDecOut.textContent = caesar(text, -shift);
+                polybiusDecOut.textContent = polybiusDec(text);
+                zigzagDecOut.textContent = zigzagDec(text, zigzagRows);
+                vigenereDecOut.textContent = vigenereDec(text, pass);
+                xorDecOut.textContent = xor(text, pass);
+                base64DecOut.textContent = fromBase64(text);
+                aes128DecOut.textContent = aesDecrypt(text, pass, 128);
+                aes256DecOut.textContent = aesDecrypt(text, pass, 256);
+                polyalphabeticDecOut.textContent = polyalphabeticDec(text, pass);
+                
+                reverseOut.textContent = reverseDecOut.textContent.split('').reverse().join('');
+                atbashOut.textContent = atbash(atbashDecOut.textContent);
+                rot13Out.textContent = caesar(rot13DecOut.textContent, 13);
+                caesarOut.textContent = caesar(caesarDecOut.textContent, shift);
+                polybiusOut.textContent = polybius(polybiusDecOut.textContent);
+                zigzagOut.textContent = zigzag(zigzagDecOut.textContent, zigzagRows);
+                vigenereOut.textContent = vigenere(vigenereDecOut.textContent, pass);
+                xorOut.textContent = xor(xorDecOut.textContent, pass);
+                base64Out.textContent = toBase64(base64DecOut.textContent);
+                aes128Out.textContent = aesEncrypt(aes128DecOut.textContent, pass, 128);
+                aes256Out.textContent = aesEncrypt(aes256DecOut.textContent, pass, 256);
+                polyalphabeticOut.textContent = polyalphabetic(polyalphabeticDecOut.textContent, pass);
+            }
         }
 
         // ---------------------------------
@@ -407,40 +527,6 @@
             }).join('');
         }
 
-        function vigenere(text, key) {
-            if (!key) return text;
-            const k = key.toUpperCase().replace(/[^A-ZА-Я]/g, '');
-            if (!k) return text;
-            let res = '';
-            for (let i = 0, j = 0; i < text.length; i++) {
-                const char = text[i];
-                const code = char.charCodeAt(0);
-                let shift = 0;
-                let alphabetSize = 0;
-                let base = 0;
-                if ((code >= 65 && code <= 90) || (code >= 97 && code <= 122)) { // Eng
-                    alphabetSize = 26;
-                    base = code >= 65 && code <= 90 ? 65 : 97;
-                    const keyChar = k.charCodeAt(j % k.length);
-                    const keyBase = (keyChar >= 65 && keyChar <= 90) ? 65 : 1040; // Используем Eng или Rus ключ
-                    shift = keyChar - keyBase;
-                    res += String.fromCharCode(((code - base + shift + alphabetSize) % alphabetSize) + base);
-                    j++;
-                } else if ((code >= 1040 && code <= 1071) || (code >= 1072 && code <= 1103)) { // Rus
-                    alphabetSize = 32;
-                    base = code >= 1040 && code <= 1071 ? 1040 : 1072;
-                    const keyChar = k.charCodeAt(j % k.length);
-                    const keyBase = (keyChar >= 65 && keyChar <= 90) ? 65 : 1040; // Используем Eng или Rus ключ
-                    shift = keyChar - keyBase;
-                    res += String.fromCharCode(((code - base + shift + alphabetSize) % alphabetSize) + base);
-                    j++;
-                } else {
-                    res += char;
-                }
-            }
-            return res;
-        }
-
         function atbash(text) {
             return text.split('').map(c => {
                 const code = c.charCodeAt(0);
@@ -450,6 +536,52 @@
                 if (code >= 1072 && code <= 1103) return String.fromCharCode(1103 - (code - 1072));
                 return c;
             }).join('');
+        }
+
+        function vigenere(text, key) {
+            const filteredKey = key.replace(/[^a-zA-Zа-яА-Я]/g, '').toUpperCase();
+            if (!filteredKey) return text;
+
+            let res = '';
+            for (let i = 0, j = 0; i < text.length; i++) {
+                const char = text[i];
+                const code = char.charCodeAt(0);
+                let shift = 0;
+                let alphabetSize = 0;
+                let base = 0;
+
+                const keyChar = filteredKey[j % filteredKey.length];
+                const key_code = keyChar.charCodeAt(0);
+                
+                if (code >= 65 && code <= 90) { // Eng uppercase
+                    alphabetSize = 26;
+                    base = 65;
+                    if (key_code >= 65 && key_code <= 90) shift = key_code - 65;
+                    res += String.fromCharCode(((code - base + shift) % alphabetSize) + base);
+                    j++;
+                } else if (code >= 97 && code <= 122) { // Eng lowercase
+                    alphabetSize = 26;
+                    base = 97;
+                    if (key_code >= 65 && key_code <= 90) shift = key_code - 65;
+                    res += String.fromCharCode(((code - base + shift) % alphabetSize) + base);
+                    j++;
+                } else if (code >= 1040 && code <= 1071) { // Rus uppercase
+                    alphabetSize = 32;
+                    base = 1040;
+                    if (key_code >= 1040 && key_code <= 1071) shift = key_code - 1040;
+                    res += String.fromCharCode(((code - base + shift) % alphabetSize) + base);
+                    j++;
+                } else if (code >= 1072 && code <= 1103) { // Rus lowercase
+                    alphabetSize = 32;
+                    base = 1072;
+                    if (key_code >= 1040 && key_code <= 1071) shift = key_code - 1040;
+                    res += String.fromCharCode(((code - base + shift) % alphabetSize) + base);
+                    j++;
+                } else {
+                    res += char;
+                }
+            }
+            return res;
         }
         
         function xor(text, pass) {
@@ -475,13 +607,24 @@
         }
 
         function polybius(text) {
-            const table = ['ABCDEF', 'GHIJKL', 'MNOPQR', 'STUVWX', 'Y Z1234', '567890'];
+            const engTable = ['ABCDEF', 'GHIJKL', 'MNOPQR', 'STUVWX', 'YZ1234', '567890'];
+            const rusTable = ['АБВГДЕЁ', 'ЖЗИЙКЛМ', 'НОПРСТУ', 'ФХЦЧШЩЪ', 'ЫЬЭЮЯ12', '34567890'];
             const res = [];
             text = text.toUpperCase();
             for (const c of text) {
                 let found = false;
-                for (let r = 0; r < table.length; r++) {
-                    const col = table[r].indexOf(c);
+                for (let r = 0; r < engTable.length; r++) {
+                    const col = engTable[r].indexOf(c);
+                    if (col !== -1) {
+                        res.push(`${r + 1}${col + 1}`);
+                        found = true;
+                        break;
+                    }
+                }
+                if (found) continue;
+
+                for (let r = 0; r < rusTable.length; r++) {
+                    const col = rusTable[r].indexOf(c);
                     if (col !== -1) {
                         res.push(`${r + 1}${col + 1}`);
                         found = true;
@@ -511,27 +654,42 @@
         }
 
         function polyalphabetic(text, key) {
-            if (!key) return text;
-            const k = key.replace(/[^a-zA-Zа-яА-Я]/g, '');
-            if (!k) return text;
+            const filteredKey = key.replace(/[^a-zA-Zа-яА-Я]/g, '').toUpperCase();
+            if (!filteredKey) return text;
+
             let res = '';
             for (let i = 0, j = 0; i < text.length; i++) {
                 const char = text[i];
                 const code = char.charCodeAt(0);
-                if ((code >= 65 && code <= 90) || (code >= 97 && code <= 122)) { // Eng
-                    const alphabetSize = 26;
-                    const base = code >= 65 && code <= 90 ? 65 : 97;
-                    const keyChar = k.charCodeAt(j % k.length);
-                    const keyBase = (keyChar >= 65 && keyChar <= 90) ? 65 : 97;
-                    const shift = keyChar - keyBase;
+                let shift = 0;
+                let alphabetSize = 0;
+                let base = 0;
+
+                const keyChar = filteredKey[j % filteredKey.length];
+                const key_code = keyChar.charCodeAt(0);
+
+                if (code >= 65 && code <= 90) { // Eng uppercase
+                    alphabetSize = 26;
+                    base = 65;
+                    if (key_code >= 65 && key_code <= 90) shift = key_code - 65;
                     res += String.fromCharCode(((code - base + shift) % alphabetSize) + base);
                     j++;
-                } else if ((code >= 1040 && code <= 1071) || (code >= 1072 && code <= 1103)) { // Rus
-                    const alphabetSize = 32;
-                    const base = code >= 1040 && code <= 1071 ? 1040 : 1072;
-                    const keyChar = k.charCodeAt(j % k.length);
-                    const keyBase = (keyChar >= 1040 && keyChar <= 1071) ? 1040 : 1072;
-                    const shift = keyChar - keyBase;
+                } else if (code >= 97 && code <= 122) { // Eng lowercase
+                    alphabetSize = 26;
+                    base = 97;
+                    if (key_code >= 65 && key_code <= 90) shift = key_code - 65;
+                    res += String.fromCharCode(((code - base + shift) % alphabetSize) + base);
+                    j++;
+                } else if (code >= 1040 && code <= 1071) { // Rus uppercase
+                    alphabetSize = 32;
+                    base = 1040;
+                    if (key_code >= 1040 && key_code <= 1071) shift = key_code - 1040;
+                    res += String.fromCharCode(((code - base + shift) % alphabetSize) + base);
+                    j++;
+                } else if (code >= 1072 && code <= 1103) { // Rus lowercase
+                    alphabetSize = 32;
+                    base = 1072;
+                    if (key_code >= 1040 && key_code <= 1071) shift = key_code - 1040;
                     res += String.fromCharCode(((code - base + shift) % alphabetSize) + base);
                     j++;
                 } else {
@@ -545,9 +703,9 @@
         //           Функции расшифровки
         // ---------------------------------
         function vigenereDec(text, key) {
-            if (!key) return text;
-            const k = key.toUpperCase().replace(/[^A-ZА-Я]/g, '');
-            if (!k) return text;
+            const filteredKey = key.replace(/[^a-zA-Zа-яА-Я]/g, '').toUpperCase();
+            if (!filteredKey) return text;
+
             let res = '';
             for (let i = 0, j = 0; i < text.length; i++) {
                 const char = text[i];
@@ -555,20 +713,32 @@
                 let shift = 0;
                 let alphabetSize = 0;
                 let base = 0;
-                if ((code >= 65 && code <= 90) || (code >= 97 && code <= 122)) { // Eng
+
+                const keyChar = filteredKey[j % filteredKey.length];
+                const key_code = keyChar.charCodeAt(0);
+
+                if (code >= 65 && code <= 90) {
                     alphabetSize = 26;
-                    base = code >= 65 && code <= 90 ? 65 : 97;
-                    const keyChar = k.charCodeAt(j % k.length);
-                    const keyBase = (keyChar >= 65 && keyChar <= 90) ? 65 : 1040;
-                    shift = keyChar - keyBase;
+                    base = 65;
+                    if (key_code >= 65 && key_code <= 90) shift = key_code - 65;
                     res += String.fromCharCode(((code - base - shift + alphabetSize) % alphabetSize) + base);
                     j++;
-                } else if ((code >= 1040 && code <= 1071) || (code >= 1072 && code <= 1103)) { // Rus
+                } else if (code >= 97 && code <= 122) {
+                    alphabetSize = 26;
+                    base = 97;
+                    if (key_code >= 65 && key_code <= 90) shift = key_code - 65;
+                    res += String.fromCharCode(((code - base - shift + alphabetSize) % alphabetSize) + base);
+                    j++;
+                } else if (code >= 1040 && code <= 1071) {
                     alphabetSize = 32;
-                    base = code >= 1040 && code <= 1071 ? 1040 : 1072;
-                    const keyChar = k.charCodeAt(j % k.length);
-                    const keyBase = (keyChar >= 65 && keyChar <= 90) ? 65 : 1040;
-                    shift = keyChar - keyBase;
+                    base = 1040;
+                    if (key_code >= 1040 && key_code <= 1071) shift = key_code - 1040;
+                    res += String.fromCharCode(((code - base - shift + alphabetSize) % alphabetSize) + base);
+                    j++;
+                } else if (code >= 1072 && code <= 1103) {
+                    alphabetSize = 32;
+                    base = 1072;
+                    if (key_code >= 1040 && key_code <= 1071) shift = key_code - 1040;
                     res += String.fromCharCode(((code - base - shift + alphabetSize) % alphabetSize) + base);
                     j++;
                 } else {
@@ -579,14 +749,24 @@
         }
 
         function polybiusDec(text) {
-            const table = ['ABCDEF', 'GHIJKL', 'MNOPQR', 'STUVWX', 'Y Z1234', '567890'];
+            const engTable = ['ABCDEF', 'GHIJKL', 'MNOPQR', 'STUVWX', 'YZ1234', '567890'];
+            const rusTable = ['АБВГДЕЁ', 'ЖЗИЙКЛМ', 'НОПРСТУ', 'ФХЦЧШЩЪ', 'ЫЬЭЮЯ12', '34567890'];
             const res = [];
             const pairs = text.split(' ').filter(p => p.length === 2);
             for (const p of pairs) {
                 const row = parseInt(p[0]) - 1;
                 const col = parseInt(p[1]) - 1;
-                if (row >= 0 && row < table.length && col >= 0 && col < table[row].length) {
-                    res.push(table[row][col]);
+                if (row >= 0 && col >= 0) {
+                    let found = false;
+                    if (row < engTable.length && col < engTable[row].length) {
+                         res.push(engTable[row][col]);
+                         found = true;
+                    } 
+                    if (!found && row < rusTable.length && col < rusTable[row].length) {
+                        res.push(rusTable[row][col]);
+                        found = true;
+                    }
+                    if (!found) res.push(p);
                 } else {
                     res.push(p);
                 }
@@ -648,27 +828,42 @@
         }
 
         function polyalphabeticDec(text, key) {
-            if (!key) return text;
-            const k = key.replace(/[^a-zA-Zа-яА-Я]/g, '');
-            if (!k) return text;
+            const filteredKey = key.replace(/[^a-zA-Zа-яА-Я]/g, '').toUpperCase();
+            if (!filteredKey) return text;
+            
             let res = '';
             for (let i = 0, j = 0; i < text.length; i++) {
                 const char = text[i];
                 const code = char.charCodeAt(0);
-                if ((code >= 65 && code <= 90) || (code >= 97 && code <= 122)) { // Eng
-                    const alphabetSize = 26;
-                    const base = code >= 65 && code <= 90 ? 65 : 97;
-                    const keyChar = k.charCodeAt(j % k.length);
-                    const keyBase = (keyChar >= 65 && keyChar <= 90) ? 65 : 97;
-                    const shift = keyChar - keyBase;
+                let shift = 0;
+                let alphabetSize = 0;
+                let base = 0;
+                
+                const keyChar = filteredKey[j % filteredKey.length];
+                const key_code = keyChar.charCodeAt(0);
+                
+                if (code >= 65 && code <= 90) { // Eng uppercase
+                    alphabetSize = 26;
+                    base = 65;
+                    if (key_code >= 65 && key_code <= 90) shift = key_code - 65;
                     res += String.fromCharCode(((code - base - shift + alphabetSize) % alphabetSize) + base);
                     j++;
-                } else if ((code >= 1040 && code <= 1071) || (code >= 1072 && code <= 1103)) { // Rus
-                    const alphabetSize = 32;
-                    const base = code >= 1040 && code <= 1071 ? 1040 : 1072;
-                    const keyChar = k.charCodeAt(j % k.length);
-                    const keyBase = (keyChar >= 1040 && keyChar <= 1071) ? 1040 : 1072;
-                    const shift = keyChar - keyBase;
+                } else if (code >= 97 && code <= 122) { // Eng lowercase
+                    alphabetSize = 26;
+                    base = 97;
+                    if (key_code >= 65 && key_code <= 90) shift = key_code - 65;
+                    res += String.fromCharCode(((code - base - shift + alphabetSize) % alphabetSize) + base);
+                    j++;
+                } else if (code >= 1040 && code <= 1071) { // Rus uppercase
+                    alphabetSize = 32;
+                    base = 1040;
+                    if (key_code >= 1040 && key_code <= 1071) shift = key_code - 1040;
+                    res += String.fromCharCode(((code - base - shift + alphabetSize) % alphabetSize) + base);
+                    j++;
+                } else if (code >= 1072 && code <= 1103) { // Rus lowercase
+                    alphabetSize = 32;
+                    base = 1072;
+                    if (key_code >= 1040 && key_code <= 1071) shift = key_code - 1040;
                     res += String.fromCharCode(((code - base - shift + alphabetSize) % alphabetSize) + base);
                     j++;
                 } else {
@@ -699,8 +894,16 @@
         function clearAll() {
             msgInp.value = '';
             passInp.value = '';
+            modeSwitch.checked = false;
+            isEncrypting = true;
             updateCiphers();
         }
+
+        // Обработчики событий для переключателя
+        modeSwitch.addEventListener('change', () => {
+            isEncrypting = !modeSwitch.checked;
+            updateCiphers();
+        });
 
         // Обработчики событий
         msgInp.addEventListener('input', updateCiphers);
@@ -709,7 +912,10 @@
         zigzagSlide.addEventListener('input', updateCiphers);
 
         // Инициализация при загрузке
-        window.onload = updateCiphers;
+        window.onload = () => {
+            modeSwitch.checked = false;
+            updateCiphers();
+        };
 
     </script>
 </body>
