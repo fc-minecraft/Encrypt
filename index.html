@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Детский шифровальщик</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <style>
+        :root {
+            --primary: #94a3b8;
+            --secondary: #e2e8f0;
+            --text-color: #334155;
+            --background: #f8fafc;
+            --card-bg: #cbd5e1;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 700px;
+        }
+
+        .card {
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* Цвета сложности */
+        .easy-card { background-color: #d1fae5; } /* Светло-зеленый */
+        .medium-card { background-color: #fef9c3; } /* Светло-желтый */
+        .hard-card { background-color: #fee2e2; } /* Светло-красный */
+        
+        .easy-header { color: #065f46; }
+        .medium-header { color: #a16207; }
+        .hard-header { color: #991b1b; }
+
+        h1, h2, h3 {
+            font-weight: 700;
+        }
+        
+        .main-header { color: var(--primary); }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 10px;
+            background: var(--secondary);
+            outline: none;
+            opacity: 0.8;
+            transition: opacity .2s;
+            border-radius: 5px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            background: var(--primary);
+            cursor: pointer;
+            border-radius: 50%;
+            border: 4px solid white;
+        }
+
+        .copy-btn {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+
+        .copy-btn:hover {
+            background-color: #64748b;
+        }
+
+        .copy-btn:active {
+            transform: scale(0.95);
+        }
+
+        .text-output {
+            background-color: white;
+            min-height: 5rem;
+            max-height: 10rem;
+            overflow-y: auto;
+            border-radius: 1rem;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .input-field {
+            background-color: white;
+            border: 2px solid #e2e8f0;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .input-field:focus {
+            border-color: #94a3b8;
+            box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container flex flex-col items-center gap-6 p-4">
+        <h1 class="text-4xl text-center main-header">Простой шифровальщик</h1>
+
+        <!-- Основной блок ввода -->
+        <div class="card bg-white w-full">
+            <h2 class="text-2xl mb-4 text-center main-header">Ваше сообщение</h2>
+            <textarea id="msgInp" placeholder="Введите ваше сообщение здесь..."
+                      class="w-full h-32 p-4 text-lg rounded-xl input-field focus:outline-none transition-shadow"
+            ></textarea>
+            
+            <div class="mt-6">
+                <h2 class="text-2xl mb-2 text-center main-header">Опциональный пароль</h2>
+                <input type="text" id="passInp" placeholder="Пароль для сложных шифров"
+                       class="w-full p-4 text-lg rounded-xl input-field focus:outline-none transition-shadow"
+                >
+            </div>
+        </div>
+        
+        <!-- Заголовок уровня сложности -->
+        <h2 class="text-3xl text-center easy-header">Простые шифры</h2>
+
+        <!-- Блок с результатами шифрования -->
+        <div id="ciphers-easy" class="w-full flex flex-col gap-6">
+
+            <!-- Реверс текста -->
+            <div class="card easy-card">
+                <h3 class="text-2xl font-bold mb-2 easy-header">Реверс текста</h3>
+                <div id="reverseOut" class="text-output"></div>
+            </div>
+            
+            <!-- Шифр Атбаш -->
+            <div class="card easy-card">
+                <h3 class="text-2xl font-bold mb-2 easy-header">Шифр Атбаш</h3>
+                <div id="atbashOut" class="text-output"></div>
+            </div>
+            
+            <!-- ROT13 -->
+            <div class="card easy-card">
+                <h3 class="text-2xl font-bold mb-2 easy-header">ROT13</h3>
+                <div id="rot13Out" class="text-output"></div>
+            </div>
+
+            <!-- Шифр Цезаря -->
+            <div class="card easy-card">
+                <h3 class="text-2xl font-bold mb-2 easy-header">Шифр Цезаря</h3>
+                <div id="caesarOut" class="text-output"></div>
+                <label for="caesarSlide" class="block my-2 text-sm">Сдвиг: <span id="caesarVal">3</span></label>
+                <input type="range" id="caesarSlide" min="1" max="32" value="3" class="w-full">
+            </div>
+        </div>
+
+        <!-- Заголовок уровня сложности -->
+        <h2 class="text-3xl text-center medium-header mt-8">Средние шифры</h2>
+
+        <div id="ciphers-medium" class="w-full flex flex-col gap-6">
+
+            <!-- Шифр Полибия -->
+            <div class="card medium-card">
+                <h3 class="text-2xl font-bold mb-2 medium-header">Шифр Полибия</h3>
+                <div id="polybiusOut" class="text-output"></div>
+            </div>
+
+            <!-- Зигзаг шифр -->
+            <div class="card medium-card">
+                <h3 class="text-2xl font-bold mb-2 medium-header">Зигзаг шифр</h3>
+                <div id="zigzagOut" class="text-output"></div>
+                <label for="zigzagSlide" class="block my-2 text-sm">Ряды: <span id="zigzagVal">3</span></label>
+                <input type="range" id="zigzagSlide" min="2" max="10" value="3" class="w-full">
+            </div>
+
+            <!-- Шифр Виженера -->
+            <div class="card medium-card">
+                <h3 class="text-2xl font-bold mb-2 medium-header">Шифр Виженера</h3>
+                <div id="vigenereOut" class="text-output"></div>
+            </div>
+
+            <!-- XOR шифр -->
+            <div class="card medium-card">
+                <h3 class="text-2xl font-bold mb-2 medium-header">XOR шифр</h3>
+                <div id="xorOut" class="text-output"></div>
+            </div>
+        </div>
+
+        <!-- Заголовок уровня сложности -->
+        <h2 class="text-3xl text-center hard-header mt-8">Сложные шифры</h2>
+
+        <div id="ciphers-hard" class="w-full flex flex-col gap-6">
+            
+            <!-- Base64 -->
+            <div class="card hard-card">
+                <h3 class="text-2xl font-bold mb-2 hard-header">Base64</h3>
+                <div id="base64Out" class="text-output"></div>
+            </div>
+
+            <!-- Шифр AES (128-bit) -->
+            <div class="card hard-card">
+                <h3 class="text-2xl font-bold mb-2 hard-header">Шифр AES (128-bit)</h3>
+                <div id="aes128Out" class="text-output"></div>
+            </div>
+
+            <!-- Шифр AES (256-bit) -->
+            <div class="card hard-card">
+                <h3 class="text-2xl font-bold mb-2 hard-header">Шифр AES (256-bit)</h3>
+                <div id="aes256Out" class="text-output"></div>
+            </div>
+            
+            <!-- Полиалфавитный шифр -->
+            <div class="card hard-card">
+                <h3 class="text-2xl font-bold mb-2 hard-header">Полиалфавитный шифр</h3>
+                <div id="polyalphabeticOut" class="text-output"></div>
+            </div>
+        </div>
+
+        <!-- Кнопки выровнены в ряд -->
+        <div class="w-full flex justify-center gap-4 mt-4">
+            <button class="copy-btn" onclick="copyAll()">Скопировать все</button>
+            <button class="copy-btn" onclick="clearAll()">Очистить</button>
+        </div>
+
+    </div>
+
+    <script>
+        const msgInp = document.getElementById('msgInp');
+        const passInp = document.getElementById('passInp');
+        const caesarSlide = document.getElementById('caesarSlide');
+        const caesarVal = document.getElementById('caesarVal');
+        const zigzagSlide = document.getElementById('zigzagSlide');
+        const zigzagVal = document.getElementById('zigzagVal');
+
+        const reverseOut = document.getElementById('reverseOut');
+        const atbashOut = document.getElementById('atbashOut');
+        const rot13Out = document.getElementById('rot13Out');
+        const caesarOut = document.getElementById('caesarOut');
+        const polybiusOut = document.getElementById('polybiusOut');
+        const zigzagOut = document.getElementById('zigzagOut');
+        const vigenereOut = document.getElementById('vigenereOut');
+        const xorOut = document.getElementById('xorOut');
+        const base64Out = document.getElementById('base64Out');
+        const aes128Out = document.getElementById('aes128Out');
+        const aes256Out = document.getElementById('aes256Out');
+        const polyalphabeticOut = document.getElementById('polyalphabeticOut');
+
+        // Обновление шифров
+        function updateCiphers() {
+            const text = msgInp.value;
+            const pass = passInp.value;
+            const shift = parseInt(caesarSlide.value);
+            const zigzagRows = parseInt(zigzagSlide.value);
+            
+            caesarVal.textContent = shift;
+            zigzagVal.textContent = zigzagRows;
+
+            reverseOut.textContent = text.split('').reverse().join('');
+            atbashOut.textContent = atbash(text);
+            rot13Out.textContent = caesar(text, 13);
+            caesarOut.textContent = caesar(text, shift);
+
+            polybiusOut.textContent = polybius(text);
+            zigzagOut.textContent = zigzag(text, zigzagRows);
+            vigenereOut.textContent = vigenere(text, pass);
+            xorOut.textContent = xor(text, pass);
+            
+            base64Out.textContent = toBase64(text);
+            aes128Out.textContent = aesEncrypt(text, pass, 128);
+            aes256Out.textContent = aesEncrypt(text, pass, 256);
+            polyalphabeticOut.textContent = polyalphabetic(text, pass);
+        }
+
+        // ---------------------------------
+        //           Функции шифрования
+        // ---------------------------------
+        function caesar(text, shift) {
+            return text.split('').map(c => {
+                const code = c.charCodeAt(0);
+                if (code >= 65 && code <= 90) return String.fromCharCode(((code - 65 + shift) % 26) + 65);
+                if (code >= 97 && code <= 122) return String.fromCharCode(((code - 97 + shift) % 26) + 97);
+                if (code >= 1040 && code <= 1071) return String.fromCharCode(((code - 1040 + shift) % 32) + 1040);
+                if (code >= 1072 && code <= 1103) return String.fromCharCode(((code - 1072 + shift) % 32) + 1072);
+                return c;
+            }).join('');
+        }
+
+        function vigenere(text, key) {
+            if (!key) return text;
+            const k = key.toUpperCase().replace(/[^A-ZА-Я]/g, '');
+            let res = '';
+            for (let i = 0, j = 0; i < text.length; i++) {
+                const char = text[i];
+                const code = char.charCodeAt(0);
+                if ((code >= 65 && code <= 90) || (code >= 97 && code <= 122)) { // Eng
+                    const alphabetSize = 26;
+                    const base = code >= 65 && code <= 90 ? 65 : 97;
+                    const keyChar = k.charCodeAt(j % k.length);
+                    const shift = (keyChar >= 65 && keyChar <= 90) ? keyChar - 65 : keyChar - 1040;
+                    res += String.fromCharCode(((code - base + shift) % alphabetSize) + base);
+                    j++;
+                } else if ((code >= 1040 && code <= 1071) || (code >= 1072 && code <= 1103)) { // Rus
+                    const alphabetSize = 32;
+                    const base = code >= 1040 && code <= 1071 ? 1040 : 1072;
+                    const keyChar = k.charCodeAt(j % k.length);
+                    const shift = (keyChar >= 65 && keyChar <= 90) ? keyChar - 65 : keyChar - 1040;
+                    res += String.fromCharCode(((code - base + shift) % alphabetSize) + base);
+                    j++;
+                } else {
+                    res += char;
+                }
+            }
+            return res;
+        }
+
+        function atbash(text) {
+            return text.split('').map(c => {
+                const code = c.charCodeAt(0);
+                if (code >= 65 && code <= 90) return String.fromCharCode(90 - (code - 65));
+                if (code >= 97 && code <= 122) return String.fromCharCode(122 - (code - 97));
+                if (code >= 1040 && code <= 1071) return String.fromCharCode(1071 - (code - 1040));
+                if (code >= 1072 && code <= 1103) return String.fromCharCode(1103 - (code - 1072));
+                return c;
+            }).join('');
+        }
+        
+        function xor(text, pass) {
+            if (!pass) return text;
+            let res = '';
+            for (let i = 0; i < text.length; i++) {
+                const charCode = text.charCodeAt(i) ^ pass.charCodeAt(i % pass.length);
+                res += String.fromCharCode(charCode);
+            }
+            return res;
+        }
+
+        function zigzag(text, rows) {
+            if (rows <= 1) return text;
+            const grid = Array.from({ length: rows }, () => []);
+            let row = 0, direction = 1;
+            for (let i = 0; i < text.length; i++) {
+                grid[row].push(text[i]);
+                row += direction;
+                if (row === 0 || row === rows - 1) direction *= -1;
+            }
+            return grid.flat().join('');
+        }
+
+        function polybius(text) {
+            const table = ['ABCDEF', 'GHIJKL', 'MNOPQR', 'STUVWX', 'Y Z1234', '567890'];
+            const res = [];
+            text = text.toUpperCase();
+            for (const c of text) {
+                let found = false;
+                for (let r = 0; r < table.length; r++) {
+                    const col = table[r].indexOf(c);
+                    if (col !== -1) {
+                        res.push(`${r + 1}${col + 1}`);
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) res.push(c);
+            }
+            return res.join(' ');
+        }
+        
+        function aesEncrypt(text, pass, keySize) {
+            if (!pass) return "Введите пароль для AES шифра";
+            try {
+                return CryptoJS.AES.encrypt(text, pass, { keySize: keySize / 32 }).toString();
+            } catch(e) {
+                return "Ошибка шифрования AES";
+            }
+        }
+        
+        /**
+         * Перекодирует текст в Base64 с поддержкой UTF-8.
+         */
+        function toBase64(text) {
+            if (!text) return '';
+            return btoa(encodeURIComponent(text).replace(/%([0-9A-F]{2})/g,
+                function toSolidBytes(match, p1) {
+                    return String.fromCharCode('0x' + p1);
+                }));
+        }
+
+        // Добавлено для наглядности
+        function polyalphabetic(text, key) {
+            if (!key) return text;
+            const k = key.replace(/[^a-zA-Zа-яА-Я]/g, '');
+            if (!k) return text;
+            let res = '';
+            for (let i = 0, j = 0; i < text.length; i++) {
+                const char = text[i];
+                const code = char.charCodeAt(0);
+                if ((code >= 65 && code <= 90) || (code >= 97 && code <= 122)) { // Eng
+                    const alphabetSize = 26;
+                    const base = code >= 65 && code <= 90 ? 65 : 97;
+                    const keyChar = k.charCodeAt(j % k.length);
+                    const keyBase = (keyChar >= 65 && keyChar <= 90) ? 65 : 97;
+                    const shift = keyChar - keyBase;
+                    res += String.fromCharCode(((code - base + shift) % alphabetSize) + base);
+                    j++;
+                } else if ((code >= 1040 && code <= 1071) || (code >= 1072 && code <= 1103)) { // Rus
+                    const alphabetSize = 32;
+                    const base = code >= 1040 && code <= 1071 ? 1040 : 1072;
+                    const keyChar = k.charCodeAt(j % k.length);
+                    const keyBase = (keyChar >= 1040 && keyChar <= 1071) ? 1040 : 1072;
+                    const shift = keyChar - keyBase;
+                    res += String.fromCharCode(((code - base + shift) % alphabetSize) + base);
+                    j++;
+                } else {
+                    res += char;
+                }
+            }
+            return res;
+        }
+
+        
+        // ---------------------------------
+        //           Вспомогательные функции
+        // ---------------------------------
+        function copyAll() {
+            const outputText = document.getElementById('ciphers-easy').innerText + '\n\n' +
+                               document.getElementById('ciphers-medium').innerText + '\n\n' +
+                               document.getElementById('ciphers-hard').innerText;
+            const textarea = document.createElement('textarea');
+            textarea.value = outputText;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+        }
+        
+        function clearAll() {
+            msgInp.value = '';
+            passInp.value = '';
+            updateCiphers();
+        }
+
+        // Обработчики событий
+        msgInp.addEventListener('input', updateCiphers);
+        passInp.addEventListener('input', updateCiphers);
+        caesarSlide.addEventListener('input', updateCiphers);
+        zigzagSlide.addEventListener('input', updateCiphers);
+
+        // Инициализация при загрузке
+        window.onload = updateCiphers;
+
+    </script>
+</body>
+</html>
