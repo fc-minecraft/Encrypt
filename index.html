@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Шифровальщик</title>
+    <title>Детский шифровальщик</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
@@ -19,6 +19,8 @@
             --switch-bg-on: #334155;
             --switch-bg-off: #cbd5e1;
             --switch-ball: #ffffff;
+            --modal-bg: rgba(0, 0, 0, 0.5);
+            --modal-card: #f1f5f9;
         }
 
         body {
@@ -176,6 +178,75 @@
         input:checked + .slider:before {
             transform: translateX(26px);
         }
+
+        /* Стили для модального окна */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: var(--modal-bg);
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background-color: var(--modal-card);
+            margin: auto;
+            padding: 2rem;
+            border-radius: 1.5rem;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        .close-btn:hover {
+            color: #1f2937;
+        }
+
+        /* Стили для кнопки-вопросика */
+        .info-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #6b7280;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            margin-left: 0.5rem;
+            transition: background-color 0.2s ease;
+        }
+
+        .info-btn:hover {
+            background-color: #4b5563;
+        }
+
+        .cipher-header-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
     </style>
 </head>
 <body>
@@ -206,176 +277,243 @@
             </div>
         </div>
         
+        <h2 id="section-header" class="text-3xl text-center main-header font-bold" style="min-height: 48px; display: flex; align-items: center; justify-content: center;">Простые шифры</h2>
+
         <!-- Раздел для шифрования -->
         <div id="ciphers-enc" class="w-full flex flex-col gap-6">
-            <h2 id="section-header-enc" class="text-3xl text-center easy-header">Простые шифры</h2>
-
             <div id="ciphers-easy-enc" class="w-full flex flex-col gap-6">
 
                 <!-- Реверс текста -->
                 <div class="card easy-card">
-                    <h3 class="text-2xl font-bold mb-2 easy-header">Реверс текста</h3>
-                    <div id="reverseOut" class="text-output"></div>
+                    <div class="cipher-header-container">
+                        <h3 class="text-2xl easy-header">Реверс текста</h3>
+                        <span class="info-btn" data-cipher="reverse">?</span>
+                    </div>
+                    <div id="reverseOut" class="text-output mt-2"></div>
                 </div>
                 
                 <!-- Шифр Атбаш -->
                 <div class="card easy-card">
-                    <h3 class="text-2xl font-bold mb-2 easy-header">Шифр Атбаш</h3>
-                    <div id="atbashOut" class="text-output"></div>
+                    <div class="cipher-header-container">
+                        <h3 class="text-2xl easy-header">Шифр Атбаш</h3>
+                        <span class="info-btn" data-cipher="atbash">?</span>
+                    </div>
+                    <div id="atbashOut" class="text-output mt-2"></div>
                 </div>
                 
                 <!-- ROT13 -->
                 <div class="card easy-card">
-                    <h3 class="text-2xl font-bold mb-2 easy-header">ROT13</h3>
-                    <div id="rot13Out" class="text-output"></div>
+                    <div class="cipher-header-container">
+                        <h3 class="text-2xl easy-header">ROT13</h3>
+                        <span class="info-btn" data-cipher="rot13">?</span>
+                    </div>
+                    <div id="rot13Out" class="text-output mt-2"></div>
                 </div>
 
                 <!-- Шифр Цезаря -->
                 <div class="card easy-card">
-                    <h3 class="text-2xl font-bold mb-2 easy-header">Шифр Цезаря</h3>
-                    <div id="caesarOut" class="text-output"></div>
+                    <div class="cipher-header-container">
+                        <h3 class="text-2xl easy-header">Шифр Цезаря</h3>
+                        <span class="info-btn" data-cipher="caesar">?</span>
+                    </div>
+                    <div id="caesarOut" class="text-output mt-2"></div>
                     <label for="caesarSlide" class="block my-2 text-sm">Сдвиг: <span id="caesarVal">3</span></label>
                     <input type="range" id="caesarSlide" min="1" max="32" value="3" class="w-full">
                 </div>
             </div>
 
-            <!-- Заголовок уровня сложности -->
-            <h2 class="text-3xl text-center medium-header mt-8">Средние шифры</h2>
-
+            <h2 class="text-3xl text-center medium-header mt-8 font-bold">Средние шифры</h2>
             <div id="ciphers-medium-enc" class="w-full flex flex-col gap-6">
 
                 <!-- Шифр Полибия -->
                 <div class="card medium-card">
-                    <h3 class="text-2xl font-bold mb-2 medium-header">Шифр Полибия</h3>
-                    <div id="polybiusOut" class="text-output"></div>
+                    <div class="cipher-header-container">
+                        <h3 class="text-2xl medium-header">Шифр Полибия</h3>
+                        <span class="info-btn" data-cipher="polybius">?</span>
+                    </div>
+                    <div id="polybiusOut" class="text-output mt-2"></div>
                 </div>
 
                 <!-- Зигзаг шифр -->
                 <div class="card medium-card">
-                    <h3 class="text-2xl font-bold mb-2 medium-header">Зигзаг шифр</h3>
-                    <div id="zigzagOut" class="text-output"></div>
+                    <div class="cipher-header-container">
+                        <h3 class="text-2xl medium-header">Зигзаг шифр</h3>
+                        <span class="info-btn" data-cipher="zigzag">?</span>
+                    </div>
+                    <div id="zigzagOut" class="text-output mt-2"></div>
                     <label for="zigzagSlide" class="block my-2 text-sm">Ряды: <span id="zigzagVal">3</span></label>
                     <input type="range" id="zigzagSlide" min="2" max="10" value="3" class="w-full">
                 </div>
 
                 <!-- Шифр Виженера -->
                 <div class="card medium-card">
-                    <h3 class="text-2xl font-bold mb-2 medium-header">Шифр Виженера</h3>
-                    <div id="vigenereOut" class="text-output"></div>
+                    <div class="cipher-header-container">
+                        <h3 class="text-2xl medium-header">Шифр Виженера</h3>
+                        <span class="info-btn" data-cipher="vigenere">?</span>
+                    </div>
+                    <div id="vigenereOut" class="text-output mt-2"></div>
                 </div>
 
                 <!-- XOR шифр -->
                 <div class="card medium-card">
-                    <h3 class="text-2xl font-bold mb-2 medium-header">XOR шифр</h3>
-                    <div id="xorOut" class="text-output"></div>
+                    <div class="cipher-header-container">
+                        <h3 class="text-2xl medium-header">XOR шифр</h3>
+                        <span class="info-btn" data-cipher="xor">?</span>
+                    </div>
+                    <div id="xorOut" class="text-output mt-2"></div>
                 </div>
             </div>
 
-            <!-- Заголовок уровня сложности -->
-            <h2 class="text-3xl text-center hard-header mt-8">Сложные шифры</h2>
-
+            <h2 class="text-3xl text-center hard-header mt-8 font-bold">Сложные шифры</h2>
             <div id="ciphers-hard-enc" class="w-full flex flex-col gap-6">
                 
                 <!-- Base64 -->
                 <div class="card hard-card">
-                    <h3 class="text-2xl font-bold mb-2 hard-header">Base64</h3>
-                    <div id="base64Out" class="text-output"></div>
+                    <div class="cipher-header-container">
+                        <h3 class="text-2xl hard-header">Base64</h3>
+                        <span class="info-btn" data-cipher="base64">?</span>
+                    </div>
+                    <div id="base64Out" class="text-output mt-2"></div>
                 </div>
 
                 <!-- Шифр AES (128-bit) -->
                 <div class="card hard-card">
-                    <h3 class="text-2xl font-bold mb-2 hard-header">Шифр AES (128-bit)</h3>
-                    <div id="aes128Out" class="text-output"></div>
+                    <div class="cipher-header-container">
+                        <h3 class="text-2xl hard-header">Шифр AES (128-bit)</h3>
+                        <span class="info-btn" data-cipher="aes128">?</span>
+                    </div>
+                    <div id="aes128Out" class="text-output mt-2"></div>
                 </div>
 
                 <!-- Шифр AES (256-bit) -->
                 <div class="card hard-card">
-                    <h3 class="text-2xl font-bold mb-2 hard-header">Шифр AES (256-bit)</h3>
-                    <div id="aes256Out" class="text-output"></div>
+                    <div class="cipher-header-container">
+                        <h3 class="text-2xl hard-header">Шифр AES (256-bit)</h3>
+                        <span class="info-btn" data-cipher="aes256">?</span>
+                    </div>
+                    <div id="aes256Out" class="text-output mt-2"></div>
                 </div>
                 
                 <!-- Полиалфавитный шифр -->
                 <div class="card hard-card">
-                    <h3 class="text-2xl font-bold mb-2 hard-header">Полиалфавитный шифр</h3>
-                    <div id="polyalphabeticOut" class="text-output"></div>
+                    <div class="cipher-header-container">
+                        <h3 class="text-2xl hard-header">Полиалфавитный шифр</h3>
+                        <span class="info-btn" data-cipher="polyalphabetic">?</span>
+                    </div>
+                    <div id="polyalphabeticOut" class="text-output mt-2"></div>
                 </div>
             </div>
         </div>
 
         <!-- Раздел для расшифровки -->
         <div id="ciphers-dec" class="w-full flex flex-col gap-6" style="display: none;">
-            <h2 id="section-header-dec" class="text-3xl text-center main-header mb-4">Расшифрованные сообщения</h2>
             
             <!-- Реверс текста -->
             <div class="card easy-card">
-                <h3 class="text-2xl font-bold mb-2 easy-header">Реверс текста</h3>
-                <div id="reverseDecOut" class="text-output"></div>
+                <div class="cipher-header-container">
+                    <h3 class="text-2xl easy-header">Реверс текста</h3>
+                    <span class="info-btn" data-cipher="reverse">?</span>
+                </div>
+                <div id="reverseDecOut" class="text-output mt-2"></div>
             </div>
 
             <!-- Шифр Атбаш -->
             <div class="card easy-card">
-                <h3 class="text-2xl font-bold mb-2 easy-header">Шифр Атбаш</h3>
-                <div id="atbashDecOut" class="text-output"></div>
+                <div class="cipher-header-container">
+                    <h3 class="text-2xl easy-header">Шифр Атбаш</h3>
+                    <span class="info-btn" data-cipher="atbash">?</span>
+                </div>
+                <div id="atbashDecOut" class="text-output mt-2"></div>
             </div>
 
             <!-- ROT13 -->
             <div class="card easy-card">
-                <h3 class="text-2xl font-bold mb-2 easy-header">ROT13</h3>
-                <div id="rot13DecOut" class="text-output"></div>
+                <div class="cipher-header-container">
+                    <h3 class="text-2xl easy-header">ROT13</h3>
+                    <span class="info-btn" data-cipher="rot13">?</span>
+                </div>
+                <div id="rot13DecOut" class="text-output mt-2"></div>
             </div>
 
             <!-- Шифр Цезаря -->
             <div class="card easy-card">
-                <h3 class="text-2xl font-bold mb-2 easy-header">Шифр Цезаря</h3>
-                <div id="caesarDecOut" class="text-output"></div>
+                <div class="cipher-header-container">
+                    <h3 class="text-2xl easy-header">Шифр Цезаря</h3>
+                    <span class="info-btn" data-cipher="caesar">?</span>
+                </div>
+                <div id="caesarDecOut" class="text-output mt-2"></div>
             </div>
 
             <!-- Шифр Полибия -->
             <div class="card medium-card">
-                <h3 class="text-2xl font-bold mb-2 medium-header">Шифр Полибия</h3>
-                <div id="polybiusDecOut" class="text-output"></div>
+                <div class="cipher-header-container">
+                    <h3 class="text-2xl medium-header">Шифр Полибия</h3>
+                    <span class="info-btn" data-cipher="polybius">?</span>
+                </div>
+                <div id="polybiusDecOut" class="text-output mt-2"></div>
             </div>
 
             <!-- Зигзаг шифр -->
             <div class="card medium-card">
-                <h3 class="text-2xl font-bold mb-2 medium-header">Зигзаг шифр</h3>
-                <div id="zigzagDecOut" class="text-output"></div>
+                <div class="cipher-header-container">
+                    <h3 class="text-2xl medium-header">Зигзаг шифр</h3>
+                    <span class="info-btn" data-cipher="zigzag">?</span>
+                </div>
+                <div id="zigzagDecOut" class="text-output mt-2"></div>
             </div>
 
             <!-- Шифр Виженера -->
             <div class="card medium-card">
-                <h3 class="text-2xl font-bold mb-2 medium-header">Шифр Виженера</h3>
-                <div id="vigenereDecOut" class="text-output"></div>
+                <div class="cipher-header-container">
+                    <h3 class="text-2xl medium-header">Шифр Виженера</h3>
+                    <span class="info-btn" data-cipher="vigenere">?</span>
+                </div>
+                <div id="vigenereDecOut" class="text-output mt-2"></div>
             </div>
 
             <!-- XOR шифр -->
             <div class="card medium-card">
-                <h3 class="text-2xl font-bold mb-2 medium-header">XOR шифр</h3>
-                <div id="xorDecOut" class="text-output"></div>
+                <div class="cipher-header-container">
+                    <h3 class="text-2xl medium-header">XOR шифр</h3>
+                    <span class="info-btn" data-cipher="xor">?</span>
+                </div>
+                <div id="xorDecOut" class="text-output mt-2"></div>
             </div>
 
             <!-- Base64 -->
             <div class="card hard-card">
-                <h3 class="text-2xl font-bold mb-2 hard-header">Base64</h3>
-                <div id="base64DecOut" class="text-output"></div>
+                <div class="cipher-header-container">
+                    <h3 class="text-2xl hard-header">Base64</h3>
+                    <span class="info-btn" data-cipher="base64">?</span>
+                </div>
+                <div id="base64DecOut" class="text-output mt-2"></div>
             </div>
 
             <!-- Шифр AES (128-bit) -->
             <div class="card hard-card">
-                <h3 class="text-2xl font-bold mb-2 hard-header">Шифр AES (128-bit)</h3>
-                <div id="aes128DecOut" class="text-output"></div>
+                <div class="cipher-header-container">
+                    <h3 class="text-2xl hard-header">Шифр AES (128-bit)</h3>
+                    <span class="info-btn" data-cipher="aes128">?</span>
+                </div>
+                <div id="aes128DecOut" class="text-output mt-2"></div>
             </div>
 
             <!-- Шифр AES (256-bit) -->
             <div class="card hard-card">
-                <h3 class="text-2xl font-bold mb-2 hard-header">Шифр AES (256-bit)</h3>
-                <div id="aes256DecOut" class="text-output"></div>
+                <div class="cipher-header-container">
+                    <h3 class="text-2xl hard-header">Шифр AES (256-bit)</h3>
+                    <span class="info-btn" data-cipher="aes256">?</span>
+                </div>
+                <div id="aes256DecOut" class="text-output mt-2"></div>
             </div>
 
             <!-- Полиалфавитный шифр -->
             <div class="card hard-card">
-                <h3 class="text-2xl font-bold mb-2 hard-header">Полиалфавитный шифр</h3>
-                <div id="polyalphabeticDecOut" class="text-output"></div>
+                <div class="cipher-header-container">
+                    <h3 class="text-2xl hard-header">Полиалфавитный шифр</h3>
+                    <span class="info-btn" data-cipher="polyalphabetic">?</span>
+                </div>
+                <div id="polyalphabeticDecOut" class="text-output mt-2"></div>
             </div>
         </div>
 
@@ -383,6 +521,15 @@
         <div class="w-full flex justify-center gap-4 mt-4">
             <button class="copy-btn" onclick="copyAll()">Скопировать все</button>
             <button class="copy-btn" onclick="clearAll()">Очистить</button>
+        </div>
+
+        <!-- Модальное окно для подсказок -->
+        <div id="infoModal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn" id="closeModal">&times;</span>
+                <h3 id="modalTitle" class="text-2xl font-bold mb-4"></h3>
+                <p id="modalText" class="text-base"></p>
+            </div>
         </div>
 
     </div>
@@ -399,6 +546,7 @@
         const encryptLabel = document.getElementById('encryptLabel');
         const decryptLabel = document.getElementById('decryptLabel');
         
+        const sectionHeader = document.getElementById('section-header');
         const ciphersEnc = document.getElementById('ciphers-enc');
         const ciphersDec = document.getElementById('ciphers-dec');
         
@@ -430,6 +578,64 @@
         const aes256DecOut = document.getElementById('aes256DecOut');
         const polyalphabeticDecOut = document.getElementById('polyalphabeticDecOut');
 
+        // Модальное окно и кнопки
+        const infoModal = document.getElementById('infoModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalText = document.getElementById('modalText');
+        const closeModalBtn = document.getElementById('closeModal');
+        const infoBtns = document.querySelectorAll('.info-btn');
+
+        const cipherExplanations = {
+            reverse: {
+                title: "Реверс текста",
+                text: "Это самый простой шифр! Он просто переворачивает твоё сообщение задом наперёд. Например, слово 'Привет' превратится в 'тевирП'."
+            },
+            atbash: {
+                title: "Шифр Атбаш",
+                text: "Этот шифр меняет каждую букву на её 'зеркальное' отражение в алфавите. Первая буква меняется на последнюю, вторая на предпоследнюю и так далее. Например, 'А' становится 'Я', а 'Б' — 'Ю'."
+            },
+            rot13: {
+                title: "ROT13",
+                text: "Очень хитрый шифр! Каждая буква сдвигается на 13 мест вперёд по алфавиту. Чтобы расшифровать, нужно сдвинуть её обратно на 13 мест."
+            },
+            caesar: {
+                title: "Шифр Цезаря",
+                text: "Это как ROT13, но ты сам выбираешь, на сколько мест сдвинуть буквы. Это твой секретный ключ! Например, если сдвиг 3, 'А' станет 'Г'."
+            },
+            polybius: {
+                title: "Шифр Полибия",
+                text: "Представь, что буквы находятся в таблице, как в игре 'Морской бой'. Каждая буква превращается в пару цифр — её координаты в таблице. Например, буква 'А' может стать '11'."
+            },
+            zigzag: {
+                title: "Зигзаг шифр",
+                text: "Это шифр-змейка! Сообщение записывается в несколько рядов зигзагом, а потом буквы просто считываются по порядку, ряд за рядом."
+            },
+            vigenere: {
+                title: "Шифр Виженера",
+                text: "Для этого шифра нужен секретный ключ — слово. Каждая буква в твоём сообщении сдвигается на разное количество мест, которое зависит от буквы в ключе."
+            },
+            xor: {
+                title: "XOR шифр",
+                text: "Этот шифр смешивает каждую букву сообщения с буквой из пароля по специальному правилу. Это как если бы ты смешал два цвета, чтобы получить новый."
+            },
+            base64: {
+                title: "Base64",
+                text: "Это не совсем шифр, а скорее способ превратить сообщение в набор специальных символов, чтобы его можно было легко отправлять по сети. Например, картинки тоже часто превращаются в такой код."
+            },
+            aes128: {
+                title: "Шифр AES (128-bit)",
+                text: "Это очень надёжный шифр, который используют даже взрослые! Чтобы его расшифровать, нужен правильный пароль и очень мощный 'ключ' из 128 'битов'. Без пароля его почти невозможно взломать."
+            },
+            aes256: {
+                title: "Шифр AES (256-bit)",
+                text: "Ещё более сильная версия шифра AES. Его 'ключ' из 256 'битов' ещё сложнее подобрать, поэтому это один из самых безопасных способов спрятать секретное сообщение."
+            },
+            polyalphabetic: {
+                title: "Полиалфавитный шифр",
+                text: "Очень похож на шифр Виженера, но использует несколько разных алфавитов, чтобы запутать следы. Это делает шифровку ещё сложнее и интереснее!"
+            }
+        };
+
         // Обновление шифров
         function updateCiphers() {
             const text = msgInp.value;
@@ -444,6 +650,7 @@
                 // Показываем секции шифрования и скрываем секцию расшифровки
                 ciphersEnc.style.display = 'flex';
                 ciphersDec.style.display = 'none';
+                sectionHeader.textContent = "Результаты шифрования";
 
                 encryptLabel.classList.remove('text-gray-400');
                 encryptLabel.classList.add('text-gray-800');
@@ -475,23 +682,11 @@
                 aes128Out.textContent = aes128Enc;
                 aes256Out.textContent = aes256Enc;
                 polyalphabeticOut.textContent = polyalphabeticEnc;
-    
-                reverseDecOut.textContent = reverseEnc.split('').reverse().join('');
-                atbashDecOut.textContent = atbash(atbashEnc);
-                rot13DecOut.textContent = caesar(rot13Enc, -13);
-                caesarDecOut.textContent = caesar(caesarEnc, -shift);
-                polybiusDecOut.textContent = polybiusDec(polybiusEnc);
-                zigzagDecOut.textContent = zigzagDec(zigzagEnc, zigzagRows);
-                vigenereDecOut.textContent = vigenereDec(vigenereEnc, pass);
-                xorDecOut.textContent = xor(xorEnc, pass);
-                base64DecOut.textContent = fromBase64(base64Enc);
-                aes128DecOut.textContent = aesDecrypt(aes128Enc, pass, 128);
-                aes256DecOut.textContent = aesDecrypt(aes256Enc, pass, 256);
-                polyalphabeticDecOut.textContent = polyalphabeticDec(polyalphabeticEnc, pass);
             } else {
                 // Скрываем секции шифрования и показываем секцию расшифровки
                 ciphersEnc.style.display = 'none';
                 ciphersDec.style.display = 'flex';
+                sectionHeader.textContent = "Расшифрованные сообщения";
 
                 encryptLabel.classList.remove('text-gray-800');
                 encryptLabel.classList.add('text-gray-400');
@@ -510,19 +705,6 @@
                 aes128DecOut.textContent = aesDecrypt(text, pass, 128);
                 aes256DecOut.textContent = aesDecrypt(text, pass, 256);
                 polyalphabeticDecOut.textContent = polyalphabeticDec(text, pass);
-                
-                reverseOut.textContent = reverseDecOut.textContent.split('').reverse().join('');
-                atbashOut.textContent = atbash(atbashDecOut.textContent);
-                rot13Out.textContent = caesar(rot13DecOut.textContent, 13);
-                caesarOut.textContent = caesar(caesarDecOut.textContent, shift);
-                polybiusOut.textContent = polybius(polybiusDecOut.textContent);
-                zigzagOut.textContent = zigzag(zigzagDecOut.textContent, zigzagRows);
-                vigenereOut.textContent = vigenere(vigenereDecOut.textContent, pass);
-                xorOut.textContent = xor(xorDecOut.textContent, pass);
-                base64Out.textContent = toBase64(base64DecOut.textContent);
-                aes128Out.textContent = aesEncrypt(aes128DecOut.textContent, pass, 128);
-                aes256Out.textContent = aesEncrypt(aes256DecOut.textContent, pass, 256);
-                polyalphabeticOut.textContent = polyalphabetic(polyalphabeticDecOut.textContent, pass);
             }
         }
 
@@ -566,25 +748,25 @@
                 const keyChar = filteredKey[j % filteredKey.length];
                 const key_code = keyChar.charCodeAt(0);
                 
-                if (code >= 65 && code <= 90) { // Eng uppercase
+                if (code >= 65 && code <= 90) {
                     alphabetSize = 26;
                     base = 65;
                     if (key_code >= 65 && key_code <= 90) shift = key_code - 65;
                     res += String.fromCharCode(((code - base + shift) % alphabetSize) + base);
                     j++;
-                } else if (code >= 97 && code <= 122) { // Eng lowercase
+                } else if (code >= 97 && code <= 122) {
                     alphabetSize = 26;
                     base = 97;
                     if (key_code >= 65 && key_code <= 90) shift = key_code - 65;
                     res += String.fromCharCode(((code - base + shift) % alphabetSize) + base);
                     j++;
-                } else if (code >= 1040 && code <= 1071) { // Rus uppercase
+                } else if (code >= 1040 && code <= 1071) {
                     alphabetSize = 32;
                     base = 1040;
                     if (key_code >= 1040 && key_code <= 1071) shift = key_code - 1040;
                     res += String.fromCharCode(((code - base + shift) % alphabetSize) + base);
                     j++;
-                } else if (code >= 1072 && code <= 1103) { // Rus lowercase
+                } else if (code >= 1072 && code <= 1103) {
                     alphabetSize = 32;
                     base = 1072;
                     if (key_code >= 1040 && key_code <= 1071) shift = key_code - 1040;
@@ -681,25 +863,25 @@
                 const keyChar = filteredKey[j % filteredKey.length];
                 const key_code = keyChar.charCodeAt(0);
 
-                if (code >= 65 && code <= 90) { // Eng uppercase
+                if (code >= 65 && code <= 90) {
                     alphabetSize = 26;
                     base = 65;
                     if (key_code >= 65 && key_code <= 90) shift = key_code - 65;
                     res += String.fromCharCode(((code - base + shift) % alphabetSize) + base);
                     j++;
-                } else if (code >= 97 && code <= 122) { // Eng lowercase
+                } else if (code >= 97 && code <= 122) {
                     alphabetSize = 26;
                     base = 97;
                     if (key_code >= 65 && key_code <= 90) shift = key_code - 65;
                     res += String.fromCharCode(((code - base + shift) % alphabetSize) + base);
                     j++;
-                } else if (code >= 1040 && code <= 1071) { // Rus uppercase
+                } else if (code >= 1040 && code <= 1071) {
                     alphabetSize = 32;
                     base = 1040;
                     if (key_code >= 1040 && key_code <= 1071) shift = key_code - 1040;
                     res += String.fromCharCode(((code - base + shift) % alphabetSize) + base);
                     j++;
-                } else if (code >= 1072 && code <= 1103) { // Rus lowercase
+                } else if (code >= 1072 && code <= 1103) {
                     alphabetSize = 32;
                     base = 1072;
                     if (key_code >= 1040 && key_code <= 1071) shift = key_code - 1040;
@@ -855,25 +1037,25 @@
                 const keyChar = filteredKey[j % filteredKey.length];
                 const key_code = keyChar.charCodeAt(0);
                 
-                if (code >= 65 && code <= 90) { // Eng uppercase
+                if (code >= 65 && code <= 90) {
                     alphabetSize = 26;
                     base = 65;
                     if (key_code >= 65 && key_code <= 90) shift = key_code - 65;
                     res += String.fromCharCode(((code - base - shift + alphabetSize) % alphabetSize) + base);
                     j++;
-                } else if (code >= 97 && code <= 122) { // Eng lowercase
+                } else if (code >= 97 && code <= 122) {
                     alphabetSize = 26;
                     base = 97;
                     if (key_code >= 65 && key_code <= 90) shift = key_code - 65;
                     res += String.fromCharCode(((code - base - shift + alphabetSize) % alphabetSize) + base);
                     j++;
-                } else if (code >= 1040 && code <= 1071) { // Rus uppercase
+                } else if (code >= 1040 && code <= 1071) {
                     alphabetSize = 32;
                     base = 1040;
                     if (key_code >= 1040 && key_code <= 1071) shift = key_code - 1040;
                     res += String.fromCharCode(((code - base - shift + alphabetSize) % alphabetSize) + base);
                     j++;
-                } else if (code >= 1072 && code <= 1103) { // Rus lowercase
+                } else if (code >= 1072 && code <= 1103) {
                     alphabetSize = 32;
                     base = 1072;
                     if (key_code >= 1040 && key_code <= 1071) shift = key_code - 1040;
@@ -919,6 +1101,29 @@
         modeSwitch.addEventListener('change', () => {
             isEncrypting = !modeSwitch.checked;
             updateCiphers();
+        });
+
+        // Обработчики событий для модального окна
+        infoBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const cipher = btn.getAttribute('data-cipher');
+                const info = cipherExplanations[cipher];
+                if (info) {
+                    modalTitle.textContent = info.title;
+                    modalText.textContent = info.text;
+                    infoModal.style.display = 'flex';
+                }
+            });
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            infoModal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target === infoModal) {
+                infoModal.style.display = 'none';
+            }
         });
 
         // Обработчики событий
