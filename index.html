@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Шифровальщик</title>
+    <title>Детский шифровальщик</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
@@ -207,103 +207,106 @@
         </div>
         
         <!-- Заголовок уровня сложности -->
-        <h2 class="text-3xl text-center easy-header">Простые шифры</h2>
+        <h2 id="section-header" class="text-3xl text-center easy-header">Простые шифры</h2>
 
         <!-- Блок с результатами шифрования -->
-        <div id="ciphers-easy-enc" class="w-full flex flex-col gap-6">
+        <div id="ciphers-enc" class="w-full flex flex-col gap-6">
+            <div id="ciphers-easy-enc" class="w-full flex flex-col gap-6">
 
-            <!-- Реверс текста -->
-            <div class="card easy-card">
-                <h3 class="text-2xl font-bold mb-2 easy-header">Реверс текста</h3>
-                <div id="reverseOut" class="text-output"></div>
-            </div>
-            
-            <!-- Шифр Атбаш -->
-            <div class="card easy-card">
-                <h3 class="text-2xl font-bold mb-2 easy-header">Шифр Атбаш</h3>
-                <div id="atbashOut" class="text-output"></div>
-            </div>
-            
-            <!-- ROT13 -->
-            <div class="card easy-card">
-                <h3 class="text-2xl font-bold mb-2 easy-header">ROT13</h3>
-                <div id="rot13Out" class="text-output"></div>
+                <!-- Реверс текста -->
+                <div class="card easy-card">
+                    <h3 class="text-2xl font-bold mb-2 easy-header">Реверс текста</h3>
+                    <div id="reverseOut" class="text-output"></div>
+                </div>
+                
+                <!-- Шифр Атбаш -->
+                <div class="card easy-card">
+                    <h3 class="text-2xl font-bold mb-2 easy-header">Шифр Атбаш</h3>
+                    <div id="atbashOut" class="text-output"></div>
+                </div>
+                
+                <!-- ROT13 -->
+                <div class="card easy-card">
+                    <h3 class="text-2xl font-bold mb-2 easy-header">ROT13</h3>
+                    <div id="rot13Out" class="text-output"></div>
+                </div>
+
+                <!-- Шифр Цезаря -->
+                <div class="card easy-card">
+                    <h3 class="text-2xl font-bold mb-2 easy-header">Шифр Цезаря</h3>
+                    <div id="caesarOut" class="text-output"></div>
+                    <label for="caesarSlide" class="block my-2 text-sm">Сдвиг: <span id="caesarVal">3</span></label>
+                    <input type="range" id="caesarSlide" min="1" max="32" value="3" class="w-full">
+                </div>
             </div>
 
-            <!-- Шифр Цезаря -->
-            <div class="card easy-card">
-                <h3 class="text-2xl font-bold mb-2 easy-header">Шифр Цезаря</h3>
-                <div id="caesarOut" class="text-output"></div>
-                <label for="caesarSlide" class="block my-2 text-sm">Сдвиг: <span id="caesarVal">3</span></label>
-                <input type="range" id="caesarSlide" min="1" max="32" value="3" class="w-full">
+            <!-- Заголовок уровня сложности -->
+            <h2 class="text-3xl text-center medium-header mt-8">Средние шифры</h2>
+
+            <div id="ciphers-medium-enc" class="w-full flex flex-col gap-6">
+
+                <!-- Шифр Полибия -->
+                <div class="card medium-card">
+                    <h3 class="text-2xl font-bold mb-2 medium-header">Шифр Полибия</h3>
+                    <div id="polybiusOut" class="text-output"></div>
+                </div>
+
+                <!-- Зигзаг шифр -->
+                <div class="card medium-card">
+                    <h3 class="text-2xl font-bold mb-2 medium-header">Зигзаг шифр</h3>
+                    <div id="zigzagOut" class="text-output"></div>
+                    <label for="zigzagSlide" class="block my-2 text-sm">Ряды: <span id="zigzagVal">3</span></label>
+                    <input type="range" id="zigzagSlide" min="2" max="10" value="3" class="w-full">
+                </div>
+
+                <!-- Шифр Виженера -->
+                <div class="card medium-card">
+                    <h3 class="text-2xl font-bold mb-2 medium-header">Шифр Виженера</h3>
+                    <div id="vigenereOut" class="text-output"></div>
+                </div>
+
+                <!-- XOR шифр -->
+                <div class="card medium-card">
+                    <h3 class="text-2xl font-bold mb-2 medium-header">XOR шифр</h3>
+                    <div id="xorOut" class="text-output"></div>
+                </div>
+            </div>
+
+            <!-- Заголовок уровня сложности -->
+            <h2 class="text-3xl text-center hard-header mt-8">Сложные шифры</h2>
+
+            <div id="ciphers-hard-enc" class="w-full flex flex-col gap-6">
+                
+                <!-- Base64 -->
+                <div class="card hard-card">
+                    <h3 class="text-2xl font-bold mb-2 hard-header">Base64</h3>
+                    <div id="base64Out" class="text-output"></div>
+                </div>
+
+                <!-- Шифр AES (128-bit) -->
+                <div class="card hard-card">
+                    <h3 class="text-2xl font-bold mb-2 hard-header">Шифр AES (128-bit)</h3>
+                    <div id="aes128Out" class="text-output"></div>
+                </div>
+
+                <!-- Шифр AES (256-bit) -->
+                <div class="card hard-card">
+                    <h3 class="text-2xl font-bold mb-2 hard-header">Шифр AES (256-bit)</h3>
+                    <div id="aes256Out" class="text-output"></div>
+                </div>
+                
+                <!-- Полиалфавитный шифр -->
+                <div class="card hard-card">
+                    <h3 class="text-2xl font-bold mb-2 hard-header">Полиалфавитный шифр</h3>
+                    <div id="polyalphabeticOut" class="text-output"></div>
+                </div>
             </div>
         </div>
 
-        <!-- Заголовок уровня сложности -->
-        <h2 class="text-3xl text-center medium-header mt-8">Средние шифры</h2>
-
-        <div id="ciphers-medium-enc" class="w-full flex flex-col gap-6">
-
-            <!-- Шифр Полибия -->
-            <div class="card medium-card">
-                <h3 class="text-2xl font-bold mb-2 medium-header">Шифр Полибия</h3>
-                <div id="polybiusOut" class="text-output"></div>
-            </div>
-
-            <!-- Зигзаг шифр -->
-            <div class="card medium-card">
-                <h3 class="text-2xl font-bold mb-2 medium-header">Зигзаг шифр</h3>
-                <div id="zigzagOut" class="text-output"></div>
-                <label for="zigzagSlide" class="block my-2 text-sm">Ряды: <span id="zigzagVal">3</span></label>
-                <input type="range" id="zigzagSlide" min="2" max="10" value="3" class="w-full">
-            </div>
-
-            <!-- Шифр Виженера -->
-            <div class="card medium-card">
-                <h3 class="text-2xl font-bold mb-2 medium-header">Шифр Виженера</h3>
-                <div id="vigenereOut" class="text-output"></div>
-            </div>
-
-            <!-- XOR шифр -->
-            <div class="card medium-card">
-                <h3 class="text-2xl font-bold mb-2 medium-header">XOR шифр</h3>
-                <div id="xorOut" class="text-output"></div>
-            </div>
-        </div>
-
-        <!-- Заголовок уровня сложности -->
-        <h2 class="text-3xl text-center hard-header mt-8">Сложные шифры</h2>
-
-        <div id="ciphers-hard-enc" class="w-full flex flex-col gap-6">
+        <!-- Раздел для расшифровки -->
+        <div id="ciphers-dec" class="w-full flex flex-col gap-6" style="display: none;">
+            <h2 class="text-3xl text-center main-header mb-4">Расшифрованные сообщения</h2>
             
-            <!-- Base64 -->
-            <div class="card hard-card">
-                <h3 class="text-2xl font-bold mb-2 hard-header">Base64</h3>
-                <div id="base64Out" class="text-output"></div>
-            </div>
-
-            <!-- Шифр AES (128-bit) -->
-            <div class="card hard-card">
-                <h3 class="text-2xl font-bold mb-2 hard-header">Шифр AES (128-bit)</h3>
-                <div id="aes128Out" class="text-output"></div>
-            </div>
-
-            <!-- Шифр AES (256-bit) -->
-            <div class="card hard-card">
-                <h3 class="text-2xl font-bold mb-2 hard-header">Шифр AES (256-bit)</h3>
-                <div id="aes256Out" class="text-output"></div>
-            </div>
-            
-            <!-- Полиалфавитный шифр -->
-            <div class="card hard-card">
-                <h3 class="text-2xl font-bold mb-2 hard-header">Полиалфавитный шифр</h3>
-                <div id="polyalphabeticOut" class="text-output"></div>
-            </div>
-        </div>
-
-        <!-- Разделитель для расшифровки -->
-        <h2 class="text-3xl text-center main-header mt-8 mb-4">Расшифрованные сообщения</h2>
-        <div id="ciphers-dec" class="w-full flex flex-col gap-6">
             <!-- Реверс текста -->
             <div class="card easy-card">
                 <h3 class="text-2xl font-bold mb-2 easy-header">Реверс текста</h3>
@@ -397,6 +400,9 @@
         const encryptLabel = document.getElementById('encryptLabel');
         const decryptLabel = document.getElementById('decryptLabel');
         
+        const ciphersEnc = document.getElementById('ciphers-enc');
+        const ciphersDec = document.getElementById('ciphers-dec');
+        
         let isEncrypting = true;
 
         const reverseOut = document.getElementById('reverseOut');
@@ -434,8 +440,12 @@
             
             caesarVal.textContent = shift;
             zigzagVal.textContent = zigzagRows;
-
+            
             if (isEncrypting) {
+                // Показываем секции шифрования и скрываем секцию расшифровки
+                ciphersEnc.style.display = 'block';
+                ciphersDec.style.display = 'none';
+
                 encryptLabel.classList.remove('text-gray-400');
                 encryptLabel.classList.add('text-gray-800');
                 decryptLabel.classList.remove('text-gray-800');
@@ -480,6 +490,10 @@
                 aes256DecOut.textContent = aesDecrypt(aes256Enc, pass, 256);
                 polyalphabeticDecOut.textContent = polyalphabeticDec(polyalphabeticEnc, pass);
             } else {
+                // Скрываем секции шифрования и показываем секцию расшифровки
+                ciphersEnc.style.display = 'none';
+                ciphersDec.style.display = 'block';
+
                 encryptLabel.classList.remove('text-gray-800');
                 encryptLabel.classList.add('text-gray-400');
                 decryptLabel.classList.remove('text-gray-400');
@@ -877,12 +891,15 @@
         //           Вспомогательные функции
         // ---------------------------------
         function copyAll() {
-            const encryptedText = document.getElementById('ciphers-easy-enc').innerText + '\n\n' +
-                                  document.getElementById('ciphers-medium-enc').innerText + '\n\n' +
-                                  document.getElementById('ciphers-hard-enc').innerText;
-            const decryptedText = document.getElementById('ciphers-dec').innerText;
-            const outputText = encryptedText + '\n\n' + '---' + '\n\n' + decryptedText;
-
+            let outputText = '';
+            if (isEncrypting) {
+                const encryptedText = document.getElementById('ciphers-enc').innerText;
+                outputText = encryptedText;
+            } else {
+                const decryptedText = document.getElementById('ciphers-dec').innerText;
+                outputText = decryptedText;
+            }
+            
             const textarea = document.createElement('textarea');
             textarea.value = outputText;
             document.body.appendChild(textarea);
