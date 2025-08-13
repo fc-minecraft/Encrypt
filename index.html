@@ -206,11 +206,10 @@
             </div>
         </div>
         
-        <!-- Заголовок уровня сложности -->
-        <h2 id="section-header" class="text-3xl text-center easy-header">Простые шифры</h2>
-
-        <!-- Блок с результатами шифрования -->
+        <!-- Раздел для шифрования -->
         <div id="ciphers-enc" class="w-full flex flex-col gap-6">
+            <h2 id="section-header-enc" class="text-3xl text-center easy-header">Простые шифры</h2>
+
             <div id="ciphers-easy-enc" class="w-full flex flex-col gap-6">
 
                 <!-- Реверс текста -->
@@ -305,7 +304,7 @@
 
         <!-- Раздел для расшифровки -->
         <div id="ciphers-dec" class="w-full flex flex-col gap-6" style="display: none;">
-            <h2 class="text-3xl text-center main-header mb-4">Расшифрованные сообщения</h2>
+            <h2 id="section-header-dec" class="text-3xl text-center main-header mb-4">Расшифрованные сообщения</h2>
             
             <!-- Реверс текста -->
             <div class="card easy-card">
@@ -443,7 +442,7 @@
             
             if (isEncrypting) {
                 // Показываем секции шифрования и скрываем секцию расшифровки
-                ciphersEnc.style.display = 'block';
+                ciphersEnc.style.display = 'flex';
                 ciphersDec.style.display = 'none';
 
                 encryptLabel.classList.remove('text-gray-400');
@@ -492,7 +491,7 @@
             } else {
                 // Скрываем секции шифрования и показываем секцию расшифровки
                 ciphersEnc.style.display = 'none';
-                ciphersDec.style.display = 'block';
+                ciphersDec.style.display = 'flex';
 
                 encryptLabel.classList.remove('text-gray-800');
                 encryptLabel.classList.add('text-gray-400');
