@@ -733,13 +733,32 @@
         //           Функции шифрования
         // ---------------------------------
         function caesar(text, shift) {
+            const engUpper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const engLower = 'abcdefghijklmnopqrstuvwxyz';
+            const rusUpper = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ';
+            const rusLower = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя';
+
             return text.split('').map(c => {
-                const code = c.charCodeAt(0);
-                if (code >= 65 && code <= 90) return String.fromCharCode(((code - 65 + shift + 26) % 26) + 65);
-                if (code >= 97 && code <= 122) return String.fromCharCode(((code - 97 + shift + 26) % 26) + 97);
-                if (code >= 1040 && code <= 1071) return String.fromCharCode(((code - 1040 + shift + 32) % 32) + 1040);
-                if (code >= 1072 && code <= 1103) return String.fromCharCode(((code - 1072 + shift + 32) % 32) + 1072);
-                return c;
+                let alphabet, base;
+                if (engUpper.includes(c)) {
+                    alphabet = engUpper;
+                    base = engUpper.charCodeAt(0);
+                } else if (engLower.includes(c)) {
+                    alphabet = engLower;
+                    base = engLower.charCodeAt(0);
+                } else if (rusUpper.includes(c)) {
+                    alphabet = rusUpper;
+                    base = rusUpper.charCodeAt(0);
+                } else if (rusLower.includes(c)) {
+                    alphabet = rusLower;
+                    base = rusLower.charCodeAt(0);
+                } else {
+                    return c;
+                }
+
+                const index = alphabet.indexOf(c);
+                const newIndex = (index + shift + alphabet.length) % alphabet.length;
+                return alphabet[newIndex];
             }).join('');
         }
 
