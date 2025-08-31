@@ -440,6 +440,8 @@
                     <span class="info-btn" data-cipher="caesar">?</span>
                 </div>
                 <div id="caesarDecOut" class="text-output mt-2"></div>
+                <label for="caesarSlide" class="block my-2 text-sm">Сдвиг: <span id="caesarValDec">3</span></label>
+                <input type="range" id="caesarSlideDec" min="1" max="32" value="3" class="w-full">
             </div>
 
             <h2 class="text-3xl text-center medium-header mt-8 font-bold">Средние шифры</h2>
@@ -460,6 +462,8 @@
                     <span class="info-btn" data-cipher="zigzag">?</span>
                 </div>
                 <div id="zigzagDecOut" class="text-output mt-2"></div>
+                <label for="zigzagSlideDec" class="block my-2 text-sm">Ряды: <span id="zigzagValDec">3</span></label>
+                <input type="range" id="zigzagSlideDec" min="2" max="10" value="3" class="w-full">
             </div>
 
             <!-- Шифр Виженера -->
@@ -551,6 +555,11 @@
         const sectionHeader = document.getElementById('section-header');
         const ciphersEnc = document.getElementById('ciphers-enc');
         const ciphersDec = document.getElementById('ciphers-dec');
+
+        const caesarSlideDec = document.getElementById('caesarSlideDec');
+        const caesarValDec = document.getElementById('caesarValDec');
+        const zigzagSlideDec = document.getElementById('zigzagSlideDec');
+        const zigzagValDec = document.getElementById('zigzagValDec');
         
         let isEncrypting = true;
 
@@ -644,9 +653,13 @@
             const pass = passInp.value;
             const shift = parseInt(caesarSlide.value);
             const zigzagRows = parseInt(zigzagSlide.value);
-            
+            const shiftDec = parseInt(caesarSlideDec.value);
+            const zigzagRowsDec = parseInt(zigzagSlideDec.value);
+
             caesarVal.textContent = shift;
             zigzagVal.textContent = zigzagRows;
+            caesarValDec.textContent = shiftDec;
+            zigzagValDec.textContent = zigzagRowsDec;
             
             if (isEncrypting) {
                 // Показываем секции шифрования и скрываем секцию расшифровки
@@ -698,9 +711,9 @@
                 reverseDecOut.textContent = text.split('').reverse().join('');
                 atbashDecOut.textContent = atbash(text);
                 rot13DecOut.textContent = caesar(text, -13);
-                caesarDecOut.textContent = caesar(text, -shift);
+                caesarDecOut.textContent = caesar(text, -shiftDec);
                 polybiusDecOut.textContent = polybiusDec(text);
-                zigzagDecOut.textContent = zigzagDec(text, zigzagRows);
+                zigzagDecOut.textContent = zigzagDec(text, zigzagRowsDec);
                 vigenereDecOut.textContent = vigenereDec(text, pass);
                 xorDecOut.textContent = xor(text, pass);
                 base64DecOut.textContent = fromBase64(text);
@@ -1133,6 +1146,8 @@
         passInp.addEventListener('input', updateCiphers);
         caesarSlide.addEventListener('input', updateCiphers);
         zigzagSlide.addEventListener('input', updateCiphers);
+        caesarSlideDec.addEventListener('input', updateCiphers);
+        zigzagSlideDec.addEventListener('input', updateCiphers);
 
         // Инициализация при загрузке
         window.onload = () => {
