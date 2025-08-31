@@ -131,14 +131,14 @@
             align-items: center;
             justify-content: center;
             gap: 1rem;
-            margin-top: 1rem;
+            margin: 1.5rem 0; /* Увеличил отступы */
         }
 
         .toggle-switch {
             position: relative;
             display: inline-block;
-            width: 60px;
-            height: 34px;
+            width: 80px; /* Увеличил ширину */
+            height: 40px; /* Увеличил высоту */
         }
 
         .toggle-switch input {
@@ -156,14 +156,14 @@
             bottom: 0;
             background-color: var(--switch-bg-off);
             transition: .4s;
-            border-radius: 34px;
+            border-radius: 40px; /* Увеличил радиус */
         }
 
         .slider:before {
             position: absolute;
             content: "";
-            height: 26px;
-            width: 26px;
+            height: 32px; /* Увеличил размер шарика */
+            width: 32px; /* Увеличил размер шарика */
             left: 4px;
             bottom: 4px;
             background-color: var(--switch-ball);
@@ -176,7 +176,12 @@
         }
 
         input:checked + .slider:before {
-            transform: translateX(26px);
+            transform: translateX(40px); /* Увеличил сдвиг */
+        }
+
+        .toggle-label {
+            font-size: 1.25rem; /* Увеличил шрифт */
+            font-weight: 500;
         }
 
         /* Стили для модального окна */
@@ -253,6 +258,16 @@
     <div class="container flex flex-col items-center gap-6 p-4">
         <h1 class="text-4xl text-center main-header">Простой шифровальщик</h1>
 
+        <!-- Переключатель режима -->
+        <div class="toggle-container">
+            <span id="encryptLabel" class="toggle-label text-gray-800">Зашифровать</span>
+            <label class="toggle-switch">
+                <input type="checkbox" id="modeSwitch">
+                <span class="slider"></span>
+            </label>
+            <span id="decryptLabel" class="toggle-label text-gray-400">Расшифровать</span>
+        </div>
+
         <!-- Основной блок ввода -->
         <div class="card bg-white w-full">
             <h2 class="text-2xl mb-4 text-center main-header">Ваше сообщение</h2>
@@ -266,18 +281,9 @@
                        class="w-full p-4 text-lg rounded-xl input-field focus:outline-none transition-shadow"
                 >
             </div>
-            
-            <div class="toggle-container">
-                <span id="encryptLabel" class="font-medium text-lg text-gray-400">Зашифровать</span>
-                <label class="toggle-switch">
-                    <input type="checkbox" id="modeSwitch">
-                    <span class="slider"></span>
-                </label>
-                <span id="decryptLabel" class="font-medium text-lg text-gray-800">Расшифровать</span>
-            </div>
         </div>
         
-        <h2 id="section-header" class="text-3xl text-center main-header font-bold" style="min-height: 48px; display: flex; align-items: center; justify-content: center;">Простые шифры</h2>
+        <h2 id="section-header" class="text-3xl text-center main-header font-bold" style="min-height: 48px; display: flex; align-items: center; justify-content: center;">Зашифрованные сообщения</h2>
 
         <!-- Раздел для шифрования -->
         <div id="ciphers-enc" class="w-full flex flex-col gap-6">
